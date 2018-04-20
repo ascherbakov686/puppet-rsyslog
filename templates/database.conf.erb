@@ -1,0 +1,22 @@
+# File is managed by Puppet
+
+## Configuration file for rsyslog-<%= @backend %>
+
+$ModLoad om<%= @backend %>
+
+#if $programname == 'smbd' and $msg contains 'session opened for user nobody' then stop
+
+<% if scope.lookupvar('rsyslog::database_clientonly::discard_msg') -%>
+if $msg contains "<%= scope.lookupvar('rsyslog::database_clientonly::discard_msg') -%>" then stop
+
+#OLD way
+#:msg, contains,  "<%= scope.lookupvar('rsyslog::database_clientonly::discard_msg') -%>" ~
+
+<% end -%>
+
+<% if scope.lookupvar('rsyslog::database_clientonly::discard_prog') -%>
+if $programname == '<%= scope.lookupvar('rsyslog::database_clientonly::discard_prog') -%>' then stop
+<% end -%>
+
+#<% pattern = '*.*' -%> 
+<%= @pattern1 %> :om<%= @backend -%>:<%= @server -%>,<%= @database -%>,<%= @username -%>,<%= @password %>

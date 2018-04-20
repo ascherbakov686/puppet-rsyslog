@@ -1,0 +1,42 @@
+{
+  "name": "caezsar-rsyslog",
+  "version": "1.0.0",
+  "author": "saz",
+  "summary": "Manage rsyslog client and server",
+  "license": "Apache-2.0",
+  "source": "https://github.com/caezsar/puppet-rsyslog.git",
+  "project_page": "https://github.com/caezsar/puppet-rsyslog.git",
+  "issues_url": "https://github.com/caezsar/puppet-rsyslog.git",
+  "dependencies": [
+  
+  ],
+  "data_provider": null,
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "RedHat"
+    },
+    {
+      "operatingsystem": "CentOS"
+    }
+
+    {
+      "operatingsystem": "Debian"
+    },
+    {
+      "operatingsystem": "Ubuntu"
+    }
+
+
+  ],
+  "requirements": [
+    {
+      "name": "pe",
+      "version_requirement": ">= 3.2.0 < 3.4.0"
+    },
+    {
+      "name": "puppet",
+      "version_requirement": ">= 3.0.0 < 5.0.0"
+    }
+  ],
+  "description": "Puppet Rsyslog saz fork: Manage rsyslog client and server via Puppet"
+}

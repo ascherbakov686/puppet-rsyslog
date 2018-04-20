@@ -1,0 +1,7 @@
+<% if scope.lookupvar('rsyslog::server::mytemplateh') and ! scope.lookupvar('rsyslog::server::mytemplateh').empty?-%>
+
+<% scope.lookupvar('rsyslog::server::mytemplateh').flatten.compact.each do |mytemplateh| -%>
+if $syslogfacility-text == '<%= mytemplateh['facility'] %>' and $syslogtag == '<%= mytemplateh['tag'] %>' then -?<%= mytemplateh['tname'] %>
+
+<% end -%>
+<% end -%>

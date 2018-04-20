@@ -1,0 +1,6 @@
+<% if scope.lookupvar('rsyslog::server::mytemplateh') and ! scope.lookupvar('rsyslog::server::mytemplateh').empty?-%>
+# Define my custom logging templates
+<% scope.lookupvar('rsyslog::server::mytemplateh').flatten.compact.each do |mytemplateh| -%>
+$Template <%= mytemplateh['tname'] %>,"<%= scope.lookupvar('rsyslog::server::server_dir') -%>%HOSTNAME%<%= scope.lookupvar('rsyslog::server::logpath') -%><%= mytemplateh['logfile'] %>"
+<% end -%>
+<% end -%>

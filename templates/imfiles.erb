@@ -1,0 +1,16 @@
+# This file is managed by Puppet and Hiera
+$ModLoad imfile
+
+<% @extra_global_options.each do |line| -%>
+	<%= line %>
+<% end -%>
+
+<% @imfiles.sort_by {|key, value| key}.each do |key,value| -%>
+
+<%= key %>
+<% value.each do |line| -%>
+	<%= line %>
+<% end -%>
+<% end -%>
+
+
