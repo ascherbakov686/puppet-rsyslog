@@ -391,7 +391,7 @@ The new rules has this definition:
 $Template dynDaemonLog,"<%= scope.lookupvar('rsyslog::server::server_dir') -%>%HOSTNAME%<%= scope.lookupvar('rsyslog::server::logpath') -%>daemon.log"
 ```
 
-Some rules had been added to discard some cron and samba messages which heavily spam `auth.log`. The rules can be found in the file `server-default.conf.erb` from template module directory, in between lines 52-60.
+Some rules had been added to discard some cron and samba messages which heavily spam `auth.log`. The rules can be found in the file `server-default.conf.erb` from template module directory, in between lines 52-60. Feel free to directly edit the file and add or remove this templates.
 ```
 ## OLD Rules to discard cron auth 
 # :programname, isequal, "CRON" ~
