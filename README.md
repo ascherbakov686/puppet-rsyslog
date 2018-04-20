@@ -62,18 +62,12 @@ for read from file in puppet module files
   }
 
 ```
-To read file messages defined in Hiera, first add this class in your machine .yaml file definition.
+To define `imfile` messages in Hiera, first add this class in your machine `.yaml` or `.json` file definition.
 ```
   - rsyslog::imfile_hiera
 ```
 
-Then add muliple log files to read from. 
-
-Add imfile_hiera in your machine definition classes:
-```
-  - "rsyslog::imfile_hiera"
-```
-Then, specify imfile name with `rsyslog::imfile_hiera::imconfig_file:` parameter, as shown in the below example. This will place a new imfile in /etc/rsyslog.d/ directory with the name defined by you. The Rsyslog server must have read permissions to the logs defined in imfile.
+Then add muliple log files to read from. Specify imfile custom name with `rsyslog::imfile_hiera::imconfig_file:` parameter, as shown in the below example. This will place a new imfile in `/etc/rsyslog.d/` directory with the name defined by you. The Rsyslog server must have read permissions to the logs defined in imfile.
 ```
 # rsyslog  imfile  
 rsyslog::imfile_hiera::imconfig_file: 'to_storage-vm001_server.conf'
@@ -110,6 +104,8 @@ rsyslog::server::mytemplateh:
       facility: 'local0'
       tag: 'collectd'
 ```
+
+
 
 The `log_templates` parameter can be used to set up custom logging templates, which can be used for local and/or remote logging. More detail on template formats can be found in the [rsyslog documentation](http://www.rsyslog.com/doc/rsyslog_conf_templates.html).
 
@@ -200,12 +196,12 @@ Declare the following to configure the connection:
 ````
 
 
-To create a Rsyslog MySQL database server on a machine and send this machine logs here to.
-First add module to hiera .yaml classes:
+To create a Rsyslog MySQL database server on a machine and send machine logs from local client to local database storage.
+First add module to your machine hiera `.yaml` definition classes:
 ```
   - rsyslog::database
 ```
-Then supply your database credentials and rsyslog pattern. The database template is represented by the file `mysql_createDB.sql.erb` stored in module template directory. This file is copied to the server and placed in `/etc/rsyslog.d` path.
+Then supply your database credentials and rsyslog pattern. The database template is represented by the file `mysql_createDB.sql.erb` stored in module template directory which automatically creates the required database schema. This file is copied to the server and placed in `/etc/rsyslog.d` path.
 
 ```
 rsyslog::database::backend: 'mysql'
@@ -235,10 +231,13 @@ mysql::server::grants:
     user: youruser@%
 ```
 
+#### Logging from a Rsyslog Client machine to a MySQL remote database
 To send log messages to a remote database from a client, first insert module name in client classes hiera .yaml definition:
 ```
   - "rsyslog::database_clientonly"
 ```
+Keep in mind that `rsyslog::database_clientonly` module is in conflict with `rsyslog::database`. Make sure you remote if defined in Rsyslog client hostname .yaml or .json definition.
+
 
 Rsyslog db remote hiera definition example:
 ```
@@ -306,7 +305,7 @@ rsyslog::server::log_templates:
       template: "/var/log/client_logs/%HOSTNAME%/%PROGRAMNAME%.log"
 ```
 
-Both can be installed at the same time.
+Server and client can be installed at the same time.
 
 ## PARAMETERS
 
@@ -377,10 +376,11 @@ The following lists all the class parameters this module accepts.
 
 ### Other notes
 
-By default, rsyslog::server will strip numbers from hostnames. This means the logs of
+In old configuration, by default, `rsyslog::server` will strip numbers from hostnames. This means the logs of
 multiple servers with the same non-numerical name will be aggregrated in a single
 directory. i.e. www01 www02 and www02 would all log to the www directory.
-This default behaviour has been modified. Some logs are aggregated anymore and are stored in a directory by the name of each machine hostname (lines 11-22 in `server-default.conf.erb` from template module directory).
+
+This default behaviour has been modified. Some logs are not aggregated anymore in a single directory but are stored in a directory by the name of each machine hostname (lines 11-22 in `server-default.conf.erb` from template module directory).
 The old rule has  the below definition:
 ```
 $Template dynKernLog,"<%= scope.lookupvar('rsyslog::server::server_dir') -%>%source:R,ERE,1,DFLT:([A-Za-z-]*)--end%<%= scope.lookupvar('rsyslog::server::logpath') -%>kern.log"
@@ -406,7 +406,7 @@ Also, some new default templates had been added in between lines 86-99 and line 
 if $syslogfacility-text == 'local0' and $syslogtag == 'apachea' then -?dynApache
 & stop
 
-if $syslogfacility-text == 'local0' and $syslogtag == 'apachee' then -?dynApache1
+if $syslogfacility-text == 'local0' and $syslogtag == 'apachee' then -?dynApache_error
 & stop
 
 if $syslogfacility-text == 'local0' and $syslogtag == 'proftpd' then -?dynFtp
@@ -421,7 +421,7 @@ if $syslogfacility-text == 'local0' and $syslogtag == 'nginx' or $syslogtag == '
 Their template definition is defined in between lines 25-30:
 ```
 $Template dynApache,"<%= scope.lookupvar('rsyslog::server::server_dir') -%>%HOSTNAME%<%= scope.lookupvar('rsyslog::server::logpath') -%>apache.log"
-$Template dynApache1,"<%= scope.lookupvar('rsyslog::server::server_dir') -%>%HOSTNAME%<%= scope.lookupvar('rsyslog::server::logpath') -%>apache_eror.log"
+$Template dynApache_error,"<%= scope.lookupvar('rsyslog::server::server_dir') -%>%HOSTNAME%<%= scope.lookupvar('rsyslog::server::logpath') -%>apache_eror.log"
 $Template dynFtp,"<%= scope.lookupvar('rsyslog::server::server_dir') -%>%HOSTNAME%<%= scope.lookupvar('rsyslog::server::logpath') -%>ftp.log"
 #$Template dynDnsmasq,"<%= scope.lookupvar('rsyslog::server::server_dir') -%>%HOSTNAME%<%= scope.lookupvar('rsyslog::server::logpath') -%>dnsmasq.log"
 $Template dynWtmp,"<%= scope.lookupvar('rsyslog::server::server_dir') -%>%HOSTNAME%<%= scope.lookupvar('rsyslog::server::logpath') -%>wtmp.log"
@@ -443,3 +443,5 @@ with the main rsyslog package.
 
 Default package_status parameter for rsyslog class used to be 'latest'. However, it was
 against puppet best practices so it defaults to 'present' now.
+
+
