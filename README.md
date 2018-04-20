@@ -207,8 +207,8 @@ Then supply your database credentials and rsyslog pattern. The database template
 rsyslog::database::backend: 'mysql'
 rsyslog::database::server: '127.0.0.1'
 rsyslog::database::database: 'syslog'
-rsyslog::database::username: 'caezsar'
-rsyslog::database::password: 'linux'
+rsyslog::database::username: 'youruser'
+rsyslog::database::password: 'yourpass'
 rsyslog::database::pattern1: 'local0,mail,user,auth,authpriv.*;cron.none;*.warn;'
 ```
 
@@ -236,7 +236,7 @@ To send log messages to a remote database from a client, first insert module nam
 ```
   - "rsyslog::database_clientonly"
 ```
-Keep in mind that `rsyslog::database_clientonly` module is in conflict with `rsyslog::database`. Make sure you remote if defined in Rsyslog client hostname .yaml or .json definition.
+Keep in mind that `rsyslog::database_clientonly` module is in conflict with `rsyslog::database`. Make sure you remove `rsyslog::database` if defined in Rsyslog client hostname .yaml or .json definition.
 
 
 Rsyslog db remote hiera definition example:
