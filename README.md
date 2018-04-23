@@ -105,7 +105,26 @@ rsyslog::server::mytemplateh:
       tag: 'collectd'
 ```
 
+Log messages redirected to rsyslog server via puppet apache file with 'logger' command only with a 'tag'
+Ex in Puppet Apache to redirect directly to rsyslog server:
+```
+access_log_pipe: "||/usr/bin/logger -t www -n 192.168.1.167 -d -P 514"
+```
 
+Create template on the Rsyslog server to receive and process Apache log messages via logger utility:
+```
+rsyslog::server::mytemplateh:
+    - tname: 'www.domain.com'
+      logfile: 'www_domain_com.log'
+      tag: 'www' 
+```
+This will create the following template with the below rule:
+```
+#Template
+$Template www.domain.com,"/opt/log/%HOSTNAME%/%$YEAR%/%$MONTH%/www_domain_com.log"
+#Rule to redirect to template log file
+if $syslogtag == "www" then -?www.domain.com
+```
 
 The `log_templates` parameter can be used to set up custom logging templates, which can be used for local and/or remote logging. More detail on template formats can be found in the [rsyslog documentation](http://www.rsyslog.com/doc/rsyslog_conf_templates.html).
 
@@ -401,7 +420,7 @@ if $programname == 'CRON' then stop
 if $programname == 'smbd' and $msg contains "session opened for user nobody" then stop
 ```
 
-Also, some new default templates had been added in between lines 86-99 and line 109:
+Also, some new default templates rules had been added in between lines 86-99 and line 109:
 ```
 if $syslogfacility-text == 'local0' and $syslogtag == 'apachea' then -?dynApache
 & stop
