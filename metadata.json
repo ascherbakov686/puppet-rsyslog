@@ -1,6 +1,6 @@
 {
   "name": "caezsar-rsyslog",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "saz",
   "summary": "Manage rsyslog client and server",
   "license": "Apache-2.0",
